@@ -1,0 +1,98 @@
+NOTE: FastBit course follows Dynamically Kernal Module
+______________________________________________________
+
+Build Kernal Module:
+--------------------
+
+-kbuild is used to build modules
+-we will be needed prebuild kernal source and header files
+-We need precompiled
+-Take are of kernal version while building module
+
+
+
+MakeFile:
+---------
+command: make -C <path to linux kernal tree> M=<Path to your module> [Targets]
+
+make -C $KDIR M=$PWD [Targets]
+
+
+
+-C $KDIR: The directory where the kernal source is located "make" will eventually change to the specified directory when executing and will change back when finished
+
+
+M=$PWD: inform s kbuild that an external module is being built. The value given to "M" is the absolute path of the directo ry where the external module (kbuild file) is located.
+
+
+modules: The default target for external modules. It has the same functionality as if no target was specified
+
+module install: install the external modules(s). The default location will be /lib/modules/<kernal_release>/extra/ but a prefix may be added with INSTALL_MOD_PATH
+
+clean: Remove all generated files in the module directory only.
+
+help: LIst the available target for external modules.
+
+
+
+Define a local Makefile:
+------------------------
+
+obj-<X> := <module_name>.o
+
+Here obj-<X> is kbuild variable and 'X' takes on of the below values
+
+X=n, Do no compile the module and link with kernal image
+
+X=m, Compile as dynamically loadable kernel module-----------> is prefereable for dynamically loaded kernel module
+
+
+
+
+Int-tree building:
+------------------
+
+Stpes to add In-tree module to kernel menu configuration
+
+1. Create a folder in driver/char/my_c_dev
+2. Copy main.c
+3. Create Kconfig file and add the below entries
+
+menu "my custom modules"
+	config CUSTOM_HELLOWORLD
+		tristate "Hello World Module Support"
+		default m
+endmenu
+
+
+4 Add the lcoal Kconfig entry to upper levelk Kconfig
+5. Create a localk Makefile
+6. add obj-<config_item> +=<module>.o into local Makefile
+7. Add the lcocal level makefile to higher level makefile
+
+
+
+
+
+kernel APIs and utilities to be sued in driver code:
+----------------------------------------------------
+
+Creation:
+---------
+alloc_chrdev_region();	1.Create Device Number
+
+cdev_init();		2.Make a char device registrationwith the VFS
+cdev_add();		
+
+class_create();	Create device files
+device_create();
+
+
+Deletion:
+---------
+unregister_chardev_region();
+
+cdev_del();
+
+class_destroy();
+device_destroy();

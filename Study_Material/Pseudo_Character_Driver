@@ -1,0 +1,87 @@
+What is Device _Driver?
+-----------------------
+Kind of an interface between HardWare and Application software
+
+Types:
+------
+Character	:Keyboard, Mouse or any sensor which communicates in series of characters.
+Block		:HDD, SSD or any memory device 
+Network	:WIFI, Bluetooth or any network device
+
+how to make device driver?
+--------------------------
+There will be a device file for each device in /dev/ directory
+
+VFS: Virtual File Systems
+-------------------------
+Device drivers are being treated as files in linux
+This is being cared by VFS
+VFS works in kernel space
+
+We have to implment our own Custom implementation of open, read, close, write and lseek.
+
+
+Terminologies:
+--------------
+
+1. Device Number
+There will be a number for devices
+Major Number and Minor Number
+
+
+Connection Establishment betn device file access and driver:
+------------------------------------------------------------
+
+Create Device Number: Combination of Major and Minor 
+Create Device Files
+Make a char device registration with the VFS (CDEV_ADD)
+Implementat the driver's file operation method gor open, read, write and close, etc.
+
+
+
+Kernel APIs:
+------------
+Creation:								Deletion:
+alloc_chrdev_region() will create the device number dynamic		unregister_chrdev_region();
+
+cdev_init() for registration of device with the VFS			cdev_dev();
+cdev_add()
+
+class_create() create device files					class_destroy();
+device_create()							device_destroy();
+
+
+Header files needed to use above API's:
+---------------------------------------
+linux/fs.h
+linux/cdev.h
+linux/device.h
+linux/uaccess.h
+linux/fs.h
+
+MACROS:
+-------
+
+MINOR(device_number);
+MAJOR(device_number);
+
+
+parameters of APIs:
+-------------------
+int alloc_chrdev_region(dev_t *dev,unsigned baseminor,unsigned count,const char *name);
+
+create a files and device structure:
+
+strucct file_operations name;
+
+struct cdev name;
+
+initialise:
+-----------
+cdev_init(&name_of_device_structure,&name_of_file_operation_structure);
+
+Registration of device to VFS:
+------------------------------
+cdev_add(&cdev_structure,device_number,count);
+
+NOTE: Whenever a file opened a file object will be created
